@@ -7,7 +7,6 @@ int p_recv_data(int MPI_rank, int connfd, int stop_flag)
     int id = 0;
     while (1)
     {
-        // memset(recv_buffer, 0, CSV_STR_MAX_LEN);
         // 向进程发送开始发送信号
         MPI_Send(&stop_flag, 1, MPI_INT, MPI_rank, 0, MPI_COMM_WORLD);
         // 接收进程发送的数据长度, 收到0时退出循环

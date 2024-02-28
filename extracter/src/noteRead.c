@@ -67,10 +67,6 @@ void NOTE_file_read(FILE *csv_file, struct NOTE_DATA *data, unsigned int *data_s
 
         buff_index_move(buffer, &index, 7);
         index += 1; // 跳过第一个"号
-        // if (ftell(csv_file) > 0x4AFA00)
-        // {
-        //     printf("DEBUG_BP");
-        // }
 
         // 开始读取医嘱文本
         strcpy(temp_text_buffer, &buffer[index]);
@@ -89,7 +85,6 @@ void NOTE_file_read(FILE *csv_file, struct NOTE_DATA *data, unsigned int *data_s
             continue;
 
         int text_length = strlen(temp_text_buffer) + 1;
-        // printf("%d %d\n", temp_node.HADM_ID, text_length);
         temp_node.TEXT = (char *)malloc(text_length);
         strcpy(temp_node.TEXT, temp_text_buffer);
         //  插入

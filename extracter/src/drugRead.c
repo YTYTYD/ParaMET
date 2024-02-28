@@ -142,7 +142,6 @@ void insert_DRUG_NODE(struct DRUG_DATA_TABLE *data, struct DRUG_DATA node)
 /**
  * 读取整个处方信息表到内存中
  */
-// void PRESCRIPTION_file_read(FILE *csv_file, struct DRUG_DATA *data, unsigned int *data_size)
 void PRESCRIPTION_file_read(FILE *csv_file, struct DRUG_DATA_TABLE *data, unsigned int *data_size)
 {
     const int BUFFER_MAX = 1024;

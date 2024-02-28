@@ -1,10 +1,10 @@
 #include "consts.h"
 
-char *OUTPUT_DIR = "/abc/log/";
+char *OUTPUT_DIR = "/vol8/home/hnu_xiaolab_5/mimic/output/";
 #ifdef MIMICIII
-char *data_path = "/abc/mimiciii/";
+char *data_path = "/vol8/home/hnu_xiaolab_5/mimic/data/mimiciii/";
 #elif defined MIMICIV
-char *data_path = "/abc/mimiciv/";
+char *data_path = "/vol8/home/hnu_xiaolab_5/mimic/data/mimiciv/";
 #endif
 
 unsigned int hash_table_len = 0;

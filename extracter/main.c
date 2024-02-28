@@ -104,54 +104,22 @@ int main()
     {
         // 读取表到内存中
         hash_table_len = ID_LEN;
-        struct timeval t_read_btime, t_read_etime;
-        gettimeofday(&t_read_btime, NULL);
         ADMISSIONS_table_read();
-        gettimeofday(&t_read_etime, NULL);
-        fflush(log_file);
-
-        gettimeofday(&t_read_btime, NULL);
         PATIENTS_table_read();
-        gettimeofday(&t_read_etime, NULL);
-        fflush(log_file);
-
-        gettimeofday(&t_read_btime, NULL);
         PRESCRIPTION_table_read();
-        gettimeofday(&t_read_etime, NULL);
-        fflush(log_file);
 
         FEATURES_TABLE = (struct EVENTS_DATA_TABLE *)malloc(hash_table_len * sizeof(struct EVENTS_DATA_TABLE));
         memset(FEATURES_TABLE, 0, hash_table_len * sizeof(struct EVENTS_DATA_TABLE));
 
-        gettimeofday(&t_read_btime, NULL);
         LABEVENTS_table_read();
-        gettimeofday(&t_read_etime, NULL);
-        fflush(log_file);
-
-        gettimeofday(&t_read_btime, NULL);
         CHARTEVENTS_table_read();
-        gettimeofday(&t_read_etime, NULL);
-        fflush(log_file);
-
-        gettimeofday(&t_read_btime, NULL);
         OUTPUTEVENTS_table_read();
-        gettimeofday(&t_read_etime, NULL);
-        fflush(log_file);
 
 #ifdef MIMICIV
-        gettimeofday(&t_read_btime, NULL);
         ICUSTAY_table_read();
-        gettimeofday(&t_read_etime, NULL);
-        fflush(log_file);
 #elif defined(MIMICIII)
-        gettimeofday(&t_read_btime, NULL);
         TRANSFER_table_read();
-        gettimeofday(&t_read_etime, NULL);
-
-        gettimeofday(&t_read_btime, NULL);
         NOTE_table_read();
-        gettimeofday(&t_read_etime, NULL);
-        fflush(log_file);
 #endif
     }
     else
@@ -170,15 +138,6 @@ int main()
     fprintf(log_file, "mem: %dKB\n", get_current_mem());
     fflush(log_file);
     // 向日志文件输出内存占用
-#endif
-
-#ifdef SREADTEST
-    // 单个病例读取测试
-    extract(HADM_IDs[0].HADM_ID, HADM_IDs[0].SUBJECT_ID);
-    fprintf(log_file, "mem: %dKB\n", get_current_mem());
-    fclose(log_file);
-    MPI_Finalize();
-    return 0;
 #endif
     MPI_Request *mpi_request;
     mpi_request = (MPI_Request *)malloc(sizeof(MPI_Request) * MPI_size);
@@ -230,12 +189,6 @@ int main()
                             recv_flag[i] = 1;
                         }
                         finish_flag &= recv_flag[i];
-#ifdef TEST1
-                        // int iiiii;
-                        // printf("\r");
-                        // for (iiiii = 1; iiiii < MPI_size; iiiii++)
-                        //     printf("%d ", recv_flag[i]);
-#endif
                     }
                     if (finish_flag)
                         break;
@@ -276,13 +229,14 @@ int main()
     {
         int recv_signal = -2;
         MPI_Recv(&recv_signal, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
         while (recv_signal == continue_signal)
         {
             struct task new_task;
-            task_recv(&new_task);      
+            task_recv(&new_task);
 #ifdef TEST1
-        // 计时
-        gettimeofday(&begintime, NULL);
+            // 计时
+            gettimeofday(&begintime, NULL);
 #endif
             char **ext_results = (char **)malloc(HADM_IDs_size * sizeof(char *));
             memset(ext_results, 0, HADM_IDs_size * sizeof(char *));
@@ -293,14 +247,9 @@ int main()
 
             for (i = 0; i < HADM_IDs_size; i++)
             {
-                if (new_task.ICD_list_size == 0 || is_in_array(HADM_IDs[i].ICD_CODE, new_task.ICD_list) != 0)
+                if (new_task.ICD_list_size == 0 || is_ICD_in_list(HADM_IDs[i], new_task.ICD_list, new_task.ICD_list_size) != 0)
                 {
-#ifdef TEST1
-                    // DEBUG
-                    // printf("%d: extract hid:%d  icd_code:%d  i:%d\n", MPI_rank, HADM_IDs[i].HADM_ID, HADM_IDs[i].ICD_CODE, i);
-#endif
                     extract(HADM_IDs[i].HADM_ID, HADM_IDs[i].SUBJECT_ID, new_task, &ext_results[result_size]);
-                    // printf("%d, %d, %d\n", HADM_IDs[i].HADM_ID, HADM_IDs[i].ICD_CODE, strlen(ext_results[result_size]));
                     ext_ids[result_size] = HADM_IDs[i].HADM_ID;
                     result_size += 1;
                 }

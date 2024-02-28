@@ -24,7 +24,7 @@ int path_merge(char *dst, char *path, const char *file_name)
     strcpy(dst + strlen(path), file_name);
     if (file_check(dst) == 0)
     {
-        printf("%s 不存在\n", file_name);
+        printf("%s not exist\n", file_name);
         return 0;
     }
     return 1;
@@ -34,12 +34,12 @@ int init(int mpi_size)
 {
     if (mpi_size <= 1)
     {
-        printf("进程数需要大于1\n");
+        printf("mpisize must > 1\n");
         return -1;
     }
     int r = 0;
     if (access(OUTPUT_DIR,0) != 0){
-        printf("输出路径不存在\n");
+        printf("output path not exist\n");
         r = -1;
     }
     //依次检查每个文件是否存在
